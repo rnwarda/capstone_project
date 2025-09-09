@@ -17,7 +17,7 @@ import os
 st.title("InsightForge: AI-Powered Business Intelligence Assistant")
 
 # create an instance of the Gemini model.
-genai.configure(api_key="AIzaSyBurIY15r7WOX87DbH4vNUfoxqBYcnOX8o")
+genai.configure(api_key="YOUR_API_KEY")
 model = genai.GenerativeModel("gemini-1.5-flash")
 
 
@@ -75,4 +75,5 @@ st.write(response.text)
 
 st.header("Visualizing Key Trends")
 st.image("product_sales_chart.png")
+
 
