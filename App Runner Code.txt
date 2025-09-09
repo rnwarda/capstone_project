@@ -1,0 +1,21 @@
+import subprocess
+import sys
+import os
+
+# Get the directory where this script is located.
+script_dir = os.path.dirname(os.path.abspath(__file__))
+
+# Change the current working directory to the script's directory.
+os.chdir(script_dir)
+
+# The command to run the Streamlit application.
+command = [sys.executable, "-m", "streamlit", "run", "app.py"]
+
+try:
+    subprocess.run(command, check=True)
+except subprocess.CalledProcessError as e:
+    print(f"An error occurred while trying to run the app: {e}")
+    print("Please make sure you have the 'streamlit' library installed by running:")
+    print("python -m pip install streamlit")
+except FileNotFoundError:
+    print("Python executable was not found. Please ensure Python is installed.")

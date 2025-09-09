@@ -1,0 +1,78 @@
+# 1. This script creates a simple web application using the Streamlit library.
+# It brings together the data analysis, the AI-generated insights, and the data visualization
+
+# 2. Prerequisites: install the streamlit library.
+# The 'import streamlit 
+import streamlit as st
+
+import pandas as pd
+import google.generativeai as genai
+import matplotlib.pyplot as plt
+import subprocess
+import sys
+import os
+
+# 3. Streamlit Application: Building the UI.
+# We set the title of our web page.
+st.title("InsightForge: AI-Powered Business Intelligence Assistant")
+
+# create an instance of the Gemini model.
+genai.configure(api_key="AIzaSyBurIY15r7WOX87DbH4vNUfoxqBYcnOX8o")
+model = genai.GenerativeModel("gemini-1.5-flash")
+
+
+# define the data and functions we need
+business_data = [
+    {"product": "Laptop", "region": "North", "sales": 15000, "customer_age": 28},
+    {"product": "Mouse", "region": "South", "sales": 300, "customer_age": 45},
+    {"product": "Laptop", "region": "South", "sales": 12000, "customer_age": 32},
+    {"product": "Keyboard", "region": "North", "sales": 800, "customer_age": 55},
+    {"product": "Mouse", "region": "North", "sales": 500, "customer_age": 22},
+    {"product": "Laptop", "region": "West", "sales": 25000, "customer_age": 38},
+    {"product": "Keyboard", "region": "East", "sales": 1100, "customer_age": 60},
+]
+df = pd.DataFrame(business_data)
+
+# 4. Basic Data Analysis: Finding a key metric.
+product_sales = df.groupby("product")["sales"].sum()
+average_customer_age = df["customer_age"].mean()
+
+# 5. Knowledge Base Creation
+knowledge_base_chunks = [
+    "Sales data for all products: Laptops have the highest total sales.",
+    f"Product sales breakdown: {product_sales.to_string()}",
+    f"Customer demographics: The average customer age is {average_customer_age:.2f} years.",
+    "Regional sales data: The North region shows strong sales performance for Keyboards and Laptops."
+]
+
+# 6. LLM Application Development
+prompt = f"""
+Based on the following business data, provide a comprehensive summary
+of key trends, insights, and recommendations. Use the data provided
+to support your answer.
+
+Business Data:
+{'\n'.join(knowledge_base_chunks)}
+
+Summary:
+"""
+
+# The line below calls the Gemini model with our prompt and generates a response.
+response = model.generate_content(prompt)
+
+# 7. Data Visualization
+plt.figure(figsize=(8, 6))
+plt.bar(product_sales.index, product_sales.values, color=['skyblue', 'salmon', 'lightgreen'])
+plt.title("Total Sales by Product")
+plt.xlabel("Product")
+plt.ylabel("Total Sales")
+plt.savefig("product_sales_chart.png")
+# ---
+
+# display the AI-generated summary and the data visualization on the web page.
+st.header("AI-Powered Business Summary")
+st.write(response.text)
+
+st.header("Visualizing Key Trends")
+st.image("product_sales_chart.png")
+
